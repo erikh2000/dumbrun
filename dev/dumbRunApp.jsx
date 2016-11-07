@@ -13,11 +13,8 @@ class DumbRunApp extends React.Component {
           elapsed: 0,
           distance: 0
       };
+      this.timer = null;
       this.onGoButtonClick = this.onGoButtonClick.bind(this);
-  }
-
-  componentDidMount() {
-    this.startTimer();
   }
 
   componentWillUnmount() {
@@ -26,6 +23,10 @@ class DumbRunApp extends React.Component {
 
   startTimer() {
     var that = this;
+
+    if (this.timer !== null) {
+      clearInterval(this.timer);
+    }
 
     function onEachSecond() {
       var elapsed, distance, milePace;
@@ -46,10 +47,13 @@ class DumbRunApp extends React.Component {
 
   onGoButtonClick() {
     if (this.state.isStarted) {
+      clearInterval(this.timer);
+      this.timer = null;
       this.setState({
         isStarted: false,
       });
     } else {
+      this.startTimer();
       this.setState({
         isStarted: true,
         startTime: Date.now(),
