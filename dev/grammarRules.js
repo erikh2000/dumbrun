@@ -1,12 +1,4 @@
 class GrammarRules {
-  /* initRules param is like:
-    [
-      ['pace', 'face', 'bass', 'pays'],
-      ['start', 'star'],
-      ['time', 'thai'],
-      ['go']
-    ]
-  */
   constructor(initRules) {
     this.grammarLookup = this._buildGrammarLookup(initRules);
   }
@@ -20,15 +12,17 @@ class GrammarRules {
   _buildGrammarLookup(initRules) {
     var ret = {};
     for(let rule of initRules) {
-      //First match in rule is the final value to which any aliases (2nd or
-      //subsequent match elements) will resolve.
-      let finalMatch = rule[0];
-      for (let match of rule) {
-        if (ret[match] !== undefined) {
-          console.warning('Overwriting already-defined match for \"' + match +
-              '\" to resolve to \"' + finalMatch + '\".');
+      let [key, callback, aliases] = rule;
+      if (ret[key] !== undefined) {
+        console.warning('Overwriting already-defined match for key \"' + key + '\".');
+      }
+      ret[key] = callback;
+      for (let alias of aliases) {
+        if (ret[alias] !== undefined) {
+          console.warning('Overwriting already-defined match for alias \"' + alias +
+              '\" to use callback from ' + key + '.');
         }
-        ret[match] = finalMatch;
+        ret[alias] = callback;
       }
     }
     return ret;

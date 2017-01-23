@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import StatLine from './statLine.jsx';
 import SpeechRecognizer from './speechRecognizer';
+import MainHandler from './matchHandlers/mainHandler.js';
 import { formatTimeText, formatDistanceText, calcMilePace } from "./timeDistUtil";
 
 class DumbRunApp extends React.Component {
@@ -13,9 +14,9 @@ class DumbRunApp extends React.Component {
           milePace: NaN, //Msecs to run one mile. NaN is "can't be calculated" value which is true when distance is 0.
           elapsed: 0,
           distance: 0,
-					lastMatch: null
       };
-			this.speechRecognizer = new SpeechRecognizer(this._onRecognizerMatch.bind(this));
+			this.mainHandler = new MainHandler();
+			this.speechRecognizer = new SpeechRecognizer(this.mainHandler);
       this.timer = null;
       this._onGoButtonClick = this._onGoButtonClick.bind(this);
   }
@@ -74,7 +75,7 @@ class DumbRunApp extends React.Component {
   }
 
 	render() {
-    var goButtonText, timeText, distanceText, milePaceText, lastMatchRender;
+    var goButtonText, timeText, distanceText, milePaceText;
     if (this.state.isStarted) {
       goButtonText = "Stop";
     } else {
@@ -83,16 +84,6 @@ class DumbRunApp extends React.Component {
     timeText = formatTimeText(this.state.elapsed);
     distanceText = formatDistanceText(this.state.distance);
     milePaceText = formatTimeText(this.state.milePace);
-
-		if (this.state.lastMatch) {
-			var that = this;
-			lastMatchRender = (
-				<p>Command received: {this.state.lastMatch}</p>
-			);
-			setTimeout(function() {
-				that.setState({lastMatch: null});
-			}, 2000);
-		}
 
 		return (
       <div id="DumbRunApp">
@@ -103,7 +94,6 @@ class DumbRunApp extends React.Component {
           <StatLine name="Mile Pace" value={ milePaceText } />
         </div>
         <button className="goButton" onClick={ this._onGoButtonClick }>{ goButtonText }</button>
-				{ lastMatchRender }
       </div>
 		);
 	}
