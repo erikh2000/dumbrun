@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import StatLine from './statLine.jsx';
-import SpeechRecognizer from './speechRecognizer';
-import MainHandler from './matchHandlers/mainHandler.js';
 import { formatTimeText, formatDistanceText, calcMilePace } from "./timeDistUtil";
 
 class DumbRunApp extends React.Component {
@@ -15,8 +13,6 @@ class DumbRunApp extends React.Component {
           elapsed: 0,
           distance: 0,
       };
-			this.mainHandler = new MainHandler();
-			this.speechRecognizer = new SpeechRecognizer(this.mainHandler);
       this.timer = null;
       this._onGoButtonClick = this._onGoButtonClick.bind(this);
   }
@@ -57,12 +53,10 @@ class DumbRunApp extends React.Component {
     if (this.state.isStarted) {
       clearInterval(this.timer);
       this.timer = null;
-			this.speechRecognizer.stop();
       this.setState({
         isStarted: false,
       });
     } else {
-			this.speechRecognizer.start();
       this._startTimer();
       this.setState({
         isStarted: true,
